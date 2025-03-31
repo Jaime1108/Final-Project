@@ -59,7 +59,7 @@ public class PlayerStat : MonoBehaviour
         Debug.Log($"Potion used. Current Health: {currentHealth}");
     }
     }
-    public void UseHolyWater(float healAmount){
+    public void UseHolyWater(){
         holyWaterCount -=1;
         Debug.Log($"holyWater used. Current potion Count: {holyWaterCount}");
     }
