@@ -41,8 +41,7 @@ public class PlayerStat : MonoBehaviour
 
     public void UsePotion(float healAmount){
     // Only proceed if the player needs healing
-    if (currentHealth < maxHealth && potionCount > 0)
-    {
+    if (currentHealth < maxHealth && potionCount > 0){
         potionCount -= 1; 
         
         
@@ -59,8 +58,11 @@ public class PlayerStat : MonoBehaviour
 
         Debug.Log($"Potion used. Current Health: {currentHealth}");
     }
+    }
     public void UseHolyWater(float healAmount){
         holyWaterCount -=1;
+        Debug.Log($"holyWater used. Current potion Count: {holyWaterCount}");
     }
+
 }
-}
+

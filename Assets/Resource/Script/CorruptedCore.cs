@@ -14,13 +14,16 @@ public class CorruptedCore : MonoBehaviour
     private float cleansingProgress = 0f;
     private float timeOutsideDefense = 0f;
     public Light pointLight;
+    public PlayerStat playerstat;
 
     void Start()
     {
         // Find the player GameObject by tag
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        
         if (playerObj != null){
             player = playerObj.transform;
+            playerstat = player.GetComponent<PlayerStat>();
         }
         else{
             Debug.LogWarning("Player not found! Make sure the Player GameObject has the tag 'Player'.");
@@ -44,7 +47,8 @@ public class CorruptedCore : MonoBehaviour
             if (distance <= cleansingRange && !isCleanse){
                 ableToExo = true;
                 Debug.Log("Press 'F' to begin the cleansing ritual!");
-                if(Input.GetKeyDown(KeyCode.F)){
+                if(Input.GetKeyDown(KeyCode.F) && playerstat.holyWaterCount>= 1){
+                    playerstat.UseHolyWater();
                     StartCleansing();
                 }
         
