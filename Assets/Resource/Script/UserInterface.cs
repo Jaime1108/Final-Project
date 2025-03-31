@@ -30,7 +30,7 @@ public class UserInterface : MonoBehaviour
     {
         if (potionCount > 0)
         {
-            PlayerStat.UsePotion(30f); // Heal 30 health
+            PlayerStat.UsePotion(25); 
             potionCount--;
         }
     }

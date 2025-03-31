@@ -20,10 +20,11 @@ public class CorruptedCore : MonoBehaviour
     {
         // Find the player GameObject by tag
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
+        playerstat = playerObj.GetComponent<PlayerStat>();
         
         if (playerObj != null){
             player = playerObj.transform;
-            playerstat = player.GetComponent<PlayerStat>();
+            
         }
         else{
             Debug.LogWarning("Player not found! Make sure the Player GameObject has the tag 'Player'.");

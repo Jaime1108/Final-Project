@@ -10,12 +10,15 @@ public class EnemyAI : MonoBehaviour
     float sightRange =20f, closeRangeDetection = 3f, attackRange = 2f;
     public bool playerInSight, playerInAttack;
     private Quaternion targetRotation;
+    PlayerStat playerstat;
+    private float timeSinceLastAttack = 0f;
 
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        playerstat = player.GetComponent<PlayerStat>();
 
     }
 
@@ -23,8 +26,8 @@ public class EnemyAI : MonoBehaviour
     {
         playerInSight = CanSeePlayer() || Vector3.Distance(transform.position, player.position) <= closeRangeDetection;
         playerInAttack = Vector3.Distance(transform.position, player.position) <= attackRange;
-
-        if (playerInAttack && playerInSight){
+        timeSinceLastAttack += Time.deltaTime;
+        if (playerInAttack && playerInSight && timeSinceLastAttack >= 3.6f){
             AttackPlayer();
         }
         else if (playerInSight){
@@ -56,12 +59,15 @@ public class EnemyAI : MonoBehaviour
     }
 
     private void AttackPlayer()
-    {
+    {   Debug.Log("Attacking Player!");
         // Stop moving when attacking
         agent.SetDestination(transform.position);
-        
         // Attack logic (e.g., play attack animation)
-        Debug.Log("Attacking Player!");
+        animator.SetTrigger("Attack");
+        // Attack logic (e.g., play attack animation)
+        playerstat.TakeDamage(10); // Dealing 10 damage to the player
+        Debug.Log("Player takes 10 damage!");
+        timeSinceLastAttack = 0f;
     }
     private bool CanSeePlayer(){
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
