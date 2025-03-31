@@ -43,11 +43,11 @@ public class CorruptedCore : MonoBehaviour
             }
             if (distance <= cleansingRange && !isCleanse){
                 ableToExo = true;
-                if (!isCleansing){
-                    isCleansing = true;
-                    Debug.Log("Cleansing started...");
+                Debug.Log("Press 'F' to begin the cleansing ritual!");
+                if(Input.GetKeyDown(KeyCode.F)){
+                    StartCleansing();
                 }
-                timeOutsideDefense = 0f;
+        
             }
             else{
                 ableToExo = false;}
@@ -70,7 +70,13 @@ public class CorruptedCore : MonoBehaviour
         }
     }
 
-    void
+    void StartCleansing(){
+        if (!isCleansing){
+                isCleansing = true;
+                Debug.Log("Cleansing started...");
+            }
+            timeOutsideDefense = 0f;
+    }
 
     void Defend()
     {

@@ -4,7 +4,9 @@ public class PlayerStat : MonoBehaviour
 {
     public float maxHealth = 100f;
     public float currentHealth;
-    public float healingRate = 5f; // Rate of health recovery per second while using potion.
+    public float healingRate = 1f; // Rate of health recovery per second while using potion.
+    public int potionCount = 2;
+    public int holyWaterCount = 1;
 
     private void Start()
     {
@@ -13,10 +15,11 @@ public class PlayerStat : MonoBehaviour
 
     private void Update()
     {
+        PassiveHealing();
         // Check if the player is using a potion
-        if (Input.GetKey(KeyCode.H)) // Suppose H is the key for healing (potion)
+        if (Input.GetKey(KeyCode.H) && potionCount > 0) // Suppose H is the key for healing (potion)
         {
-            HealOverTime();
+            UsePotion(25f);
         }
     }
 
@@ -27,7 +30,7 @@ public class PlayerStat : MonoBehaviour
         // Add any damage effect like flash or sound here
     }
 
-    void HealOverTime()
+    void PassiveHealing()
     {
         if (currentHealth < maxHealth)
         {
@@ -36,9 +39,28 @@ public class PlayerStat : MonoBehaviour
         }
     }
 
-    public void UsePotion(float healAmount)
+    public void UsePotion(float healAmount){
+    // Only proceed if the player needs healing
+    if (currentHealth < maxHealth && potionCount > 0)
     {
-        currentHealth += healAmount;
-        currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+        potionCount -= 1; 
+        
+        
+        float healingPerFrame = 5f * Time.deltaTime;  
+
+        // Gradually heal the player
+        while (healAmount > 0 && currentHealth < maxHealth)
+        {
+            // Add healing every frame, making sure not to exceed max health
+            currentHealth += healingPerFrame;
+            healAmount -= healingPerFrame;
+            currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
+        }
+
+        Debug.Log($"Potion used. Current Health: {currentHealth}");
     }
+    public void UseHolyWater(float healAmount){
+        holyWaterCount -=1;
+    }
+}
 }
