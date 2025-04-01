@@ -4,14 +4,16 @@ using UnityEngine.AI;
 public class EnemyAI : MonoBehaviour
 {
     public NavMeshAgent agent;
+    public int health;
     public Transform player;
     private Animator animator;
     // Enemy State Variables
-    float sightRange =20f, closeRangeDetection = 3f, attackRange = 2f;
+    float sightRange =20f, closeRangeDetection = 5f, attackRange = 3f;
     public bool playerInSight, playerInAttack;
     private Quaternion targetRotation;
     PlayerStat playerstat;
     private float timeSinceLastAttack = 0f;
+    private bool isAlive = true;
 
     private void Awake()
     {
@@ -19,22 +21,30 @@ public class EnemyAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         playerstat = player.GetComponent<PlayerStat>();
+        health = 100;
 
     }
 
     private void Update()
-    {
-        playerInSight = CanSeePlayer() || Vector3.Distance(transform.position, player.position) <= closeRangeDetection;
-        playerInAttack = Vector3.Distance(transform.position, player.position) <= attackRange;
-        timeSinceLastAttack += Time.deltaTime;
-        if (playerInAttack && playerInSight && timeSinceLastAttack >= 3.6f){
-            AttackPlayer();
-        }
-        else if (playerInSight){
-            ChasePlayer();
-        }
-        else{
-            Patrol();
+    {   
+        if (isAlive){
+        
+            if (health == 0){
+                Die();
+            }
+                playerInSight = CanSeePlayer() || Vector3.Distance(transform.position, player.position) <= closeRangeDetection;
+                playerInAttack = Vector3.Distance(transform.position, player.position) <= attackRange;
+                timeSinceLastAttack += Time.deltaTime;
+                if (playerInAttack && playerInSight && timeSinceLastAttack >= 3.6f){
+                    AttackPlayer();
+                    //Die();
+                }
+                else if (playerInSight){
+                    ChasePlayer();
+                }
+                else{
+                    Patrol();
+                }
         }
     }
 
@@ -50,18 +60,20 @@ public class EnemyAI : MonoBehaviour
 
     private void ChasePlayer()
     {
-        
-        animator.SetBool("IsMoving", true);
-        
-        
-        agent.SetDestination(player.position);
-        Debug.Log("chasing");
+        if (!playerInAttack) // Ensure movement only if NOT in attack range
+        {
+            agent.isStopped = false;
+            animator.SetBool("IsMoving", true);
+            agent.SetDestination(player.position);
+            Debug.Log("chasing");
+        }
     }
 
-    private void AttackPlayer()
-    {   Debug.Log("Attacking Player!");
+    private void AttackPlayer(){
+        //animator.SetBool("IsMoving", false);
+        Debug.Log("Attacking Player!");
         // Stop moving when attacking
-        agent.SetDestination(transform.position);
+        //agent.SetDestination(transform.position);
         // Attack logic (e.g., play attack animation)
         animator.SetTrigger("Attack");
         // Attack logic (e.g., play attack animation)
@@ -90,6 +102,18 @@ public class EnemyAI : MonoBehaviour
         targetRotation = Quaternion.Euler(0, transform.eulerAngles.y + randomAngle, 0);
         
     }
+
+    private void Die(){
+        isAlive = false;
+        animator.SetBool("Alive", isAlive);
+        animator.SetBool("IsMoving", false);
+        Destroy(gameObject, 6f);
+    }
+    public void TakeDamage(int damage){
+        if (!isAlive){ 
+            return;
+        }
+        health -= damage;}
 
     private void OnDrawGizmos(){
         Gizmos.color = Color.green;

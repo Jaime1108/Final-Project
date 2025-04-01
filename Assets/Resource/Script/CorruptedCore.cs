@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 
 public class CorruptedCore : MonoBehaviour
 {
@@ -15,13 +17,14 @@ public class CorruptedCore : MonoBehaviour
     private float timeOutsideDefense = 0f;
     public Light pointLight;
     public PlayerStat playerstat;
+    private UserInterface userinterface;
 
     void Start()
     {
         // Find the player GameObject by tag
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        playerstat = playerObj.GetComponent<PlayerStat>();
-        
+        playerstat = FindObjectOfType<PlayerStat>();
+        userinterface = FindObjectOfType<UserInterface>();
         if (playerObj != null){
             player = playerObj.transform;
             
@@ -38,7 +41,7 @@ public class CorruptedCore : MonoBehaviour
             float distance = Vector3.Distance(transform.position, player.position);
             if( cleansingProgress >= cleansingTime && isCleansing){
                 isCleanse = true;
-                
+                userinterface.currentActionText.text = "✨ Cleanse complete! The corruption has been removed. ✨";
                 Debug.Log("✨ Cleanse complete! The corruption has been removed. ✨");
                 pointLight.color = new Color(1f, 1f, 0.3f); // RGB values for bright yellow
             
@@ -47,6 +50,7 @@ public class CorruptedCore : MonoBehaviour
             }
             if (distance <= cleansingRange && !isCleanse){
                 ableToExo = true;
+                userinterface.currentActionText.text = "Press 'F' to begin the cleansing ritual!";
                 Debug.Log("Press 'F' to begin the cleansing ritual!");
                 if(Input.GetKeyDown(KeyCode.F) && playerstat.holyWaterCount>= 1){
                     playerstat.UseHolyWater();
@@ -64,11 +68,12 @@ public class CorruptedCore : MonoBehaviour
                 Defend();
             }
             else if (isCleansing){
-                timeOutsideDefense  += Time.deltaTime;
+                timeOutsideDefense  += Time.deltaTime;s
                 if (timeOutsideDefense >= resetTime)
                 {
                     cleansingProgress = 0f;
                     isCleansing = false;
+                    userinterface.currentActionText.text = "Cleansing failed";
                     Debug.Log("Cleansing reset! Player left defense range too long.");
                 }
             }

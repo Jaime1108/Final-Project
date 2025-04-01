@@ -152,11 +152,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a1c22b6dc83e0264fb3e8176f9c12b94, type: 3}
       propertyPath: m_Name
-      value: enemy
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a1c22b6dc83e0264fb3e8176f9c12b94, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a1c22b6dc83e0264fb3e8176f9c12b94, type: 3}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 2559285840627121667, guid: a1c22b6dc83e0264fb3e8176f9c12b94, type: 3}
       propertyPath: m_LocalPosition.y
@@ -257,6 +261,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   agent: {fileID: 8081978012337063179}
+  health: 0
   player: {fileID: 0}
   playerInSight: 0
   playerInAttack: 0

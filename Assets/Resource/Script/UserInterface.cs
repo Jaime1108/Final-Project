@@ -1,37 +1,33 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;    
+using System;
 
 public class UserInterface : MonoBehaviour
 {
     public PlayerStat PlayerStat;
-    public Text potionCountText;
-    public Text holyWaterCountText;
-    public Text weaponSlotText;
-    public Slider healthSlider;
-    public Slider holyWaterSlider;
-
-    public int potionCount = 3; // Example starting potion count.
-    public int holyWaterCount = 5; // Example starting holy water count.
+    public TMP_Text potionCountText;
+    public TMP_Text holyWaterCountText;
+    //public Text weaponSlotText;
+    public Image healthSlider;
+    public TMP_Text currentHealth;
+    private  PlayerStat playerstat;
+    public TMP_Text currentActionText;
 
     void Start()
     {
-        healthSlider.maxValue = PlayerStat.maxHealth;
-        holyWaterSlider.maxValue = 10; // Just an example for holy water usage.
+        playerstat = FindObjectOfType<PlayerStat>();
+        
+        
     }
 
     void Update()
     {
-        healthSlider.value = PlayerStat.currentHealth;
-        potionCountText.text = "Potions: " + potionCount.ToString();
-        holyWaterCountText.text = "Holy Water: " + holyWaterCount.ToString();
+        currentHealth.text = $"{playerstat.currentHealth}/{playerstat.maxHealth}";
+        potionCountText.text = $"Potions: {playerstat.potionCount}";
+        holyWaterCountText.text = $"Holy Water: {playerstat.holyWaterCount}";
+
+        healthSlider.fillAmount= (float)playerstat.currentHealth/playerstat.maxHealth;
     }
 
-    public void UsePotion()
-    {
-        if (potionCount > 0)
-        {
-            PlayerStat.UsePotion(25); 
-            potionCount--;
-        }
-    }
 }
