@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using UnityEngine.SceneManagement;
 
 public class PlayerStat : MonoBehaviour
 {
@@ -8,11 +9,12 @@ public class PlayerStat : MonoBehaviour
     public float healingRate = 1f; // Rate of health recovery per second while using potion.
     public int potionCount = 2;
     public int holyWaterCount = 1;
-
+    private UserInterface userinterface;
     private void Start()
     {
         currentHealth = maxHealth; // Initialize health.
         Debug.Log("Player start health: " + currentHealth);
+        userinterface = FindFirstObjectByType<UserInterface>();
     }
 
     private void Update()
@@ -20,12 +22,13 @@ public class PlayerStat : MonoBehaviour
         PassiveHealing();
 
         // Check if the player is using a potion
-        if (Input.GetKey(KeyCode.H) && potionCount > 0) // Suppose H is the key for healing (potion)
+        if (Input.GetKey(KeyCode.H) && potionCount > 0) 
         {
             UsePotion(25);
         }
         if(currentHealth == 0){
-            Die();
+            userinterface.currentActionText.text = "Our Great Knight has fallen!The Brotherhood shall avenge you!";
+            Invoke(nameof(Die),3f);
         }
     }
 
@@ -69,6 +72,6 @@ public class PlayerStat : MonoBehaviour
         Debug.Log($"Holy Water used. Current Holy Water Count: {holyWaterCount}");
     }
     public void Die(){
-        //die
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }
