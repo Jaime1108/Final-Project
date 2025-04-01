@@ -53,18 +53,13 @@ public class PlayerStat : MonoBehaviour
         {
             potionCount -= 1;
 
-            // Gradually heal the player
-            while (healAmount > 0 && currentHealth < maxHealth)
-            {
-                int healingPerFrame = Mathf.FloorToInt(5f * Time.deltaTime);  // Healing per frame is an int
-
-                // Add healing every frame, making sure not to exceed max health
-                currentHealth += healingPerFrame;
-                healAmount -= healingPerFrame;
-                currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+            
+            if (healAmount + currentHealth >= maxHealth){
+                currentHealth = maxHealth;
             }
-
-            Debug.Log($"Potion used. Current Health: {currentHealth}");
+            else{
+                currentHealth += healAmount;
+            }
         }
     }
 

@@ -14,6 +14,7 @@ public class EnemyAI : MonoBehaviour
     PlayerStat playerstat;
     private float timeSinceLastAttack = 0f;
     private bool isAlive = true;
+    private CorruptedCore corecorruption;
 
     private void Awake()
     {
@@ -21,6 +22,7 @@ public class EnemyAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         playerstat = player.GetComponent<PlayerStat>();
+        corecorruption = FindFirstObjectByType<CorruptedCore>();
         health = 100;
 
     }
@@ -32,19 +34,22 @@ public class EnemyAI : MonoBehaviour
             if (health == 0){
                 Die();
             }
-                playerInSight = CanSeePlayer() || Vector3.Distance(transform.position, player.position) <= closeRangeDetection;
-                playerInAttack = Vector3.Distance(transform.position, player.position) <= attackRange;
-                timeSinceLastAttack += Time.deltaTime;
-                if (playerInAttack && playerInSight && timeSinceLastAttack >= 3.6f){
-                    AttackPlayer();
-                    //Die();
-                }
-                else if (playerInSight){
-                    ChasePlayer();
-                }
-                else{
-                    Patrol();
-                }
+        if (corecorruption.isCleanse){
+                Die();
+        }
+            playerInSight = CanSeePlayer() || Vector3.Distance(transform.position, player.position) <= closeRangeDetection;
+            playerInAttack = Vector3.Distance(transform.position, player.position) <= attackRange;
+            timeSinceLastAttack += Time.deltaTime;
+            if (playerInAttack && playerInSight && timeSinceLastAttack >= 3.6f){
+                AttackPlayer();
+                //Die();
+            }
+            else if (playerInSight){
+                ChasePlayer();
+            }
+            else{
+                Patrol();
+            }
         }
     }
 

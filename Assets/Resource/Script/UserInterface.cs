@@ -16,7 +16,7 @@ public class UserInterface : MonoBehaviour
 
     void Start()
     {
-        playerstat = FindObjectOfType<PlayerStat>();
+        playerstat = FindFirstObjectByType<PlayerStat>();
         
         
     }

@@ -6,7 +6,6 @@ public class CorruptedCore : MonoBehaviour
 {
     public bool isCleanse = false;
     public bool ableToExo = false;
-
     public float cleansingRange = 4f;
     public float defenseRange = 10f;
     public float cleansingTime = 5f;
@@ -23,8 +22,8 @@ public class CorruptedCore : MonoBehaviour
     {
         // Find the player GameObject by tag
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
-        playerstat = FindObjectOfType<PlayerStat>();
-        userinterface = FindObjectOfType<UserInterface>();
+        playerstat = FindFirstObjectByType<PlayerStat>();
+        userinterface = FindFirstObjectByType<UserInterface>();
         if (playerObj != null){
             player = playerObj.transform;
             
@@ -41,7 +40,7 @@ public class CorruptedCore : MonoBehaviour
             float distance = Vector3.Distance(transform.position, player.position);
             if( cleansingProgress >= cleansingTime && isCleansing){
                 isCleanse = true;
-                userinterface.currentActionText.text = "✨ Cleanse complete! The corruption has been removed. ✨";
+                userinterface.currentActionText.text = "Cleanse complete! The corruption has been removed.";
                 Debug.Log("✨ Cleanse complete! The corruption has been removed. ✨");
                 pointLight.color = new Color(1f, 1f, 0.3f); // RGB values for bright yellow
             
@@ -65,10 +64,11 @@ public class CorruptedCore : MonoBehaviour
                 timeOutsideDefense = 0f;
                 cleansingProgress += Time.deltaTime;
                 Debug.Log($"Cleansing progress: {cleansingProgress}/{cleansingTime}");
+                userinterface.currentActionText.text ="Cleansing the Area... ";
                 Defend();
             }
             else if (isCleansing){
-                timeOutsideDefense  += Time.deltaTime;s
+                timeOutsideDefense  += Time.deltaTime;
                 if (timeOutsideDefense >= resetTime)
                 {
                     cleansingProgress = 0f;
