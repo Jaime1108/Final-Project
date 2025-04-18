@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
 
 public class EnemyAI : MonoBehaviour
 {
@@ -7,14 +8,24 @@ public class EnemyAI : MonoBehaviour
     public int health;
     public Transform player;
     private Animator animator;
-    // Enemy State Variables
-    float sightRange =20f, closeRangeDetection = 5f, attackRange = 3f;
+
+    float sightRange = 20f, closeRangeDetection = 5f, attackRange = 3f;
     public bool playerInSight, playerInAttack;
+
     private Quaternion targetRotation;
-    PlayerStat playerstat;
+    private PlayerStat playerstat;
     private float timeSinceLastAttack = 0f;
     private bool isAlive = true;
     private CorruptedCore corecorruption;
+
+    // Patrol Variables
+    private Vector3 originalPosition;
+    private List<Vector3> patrolPoints = new List<Vector3>();
+    private int currentPatrolIndex = 0;
+    private float waitTimer = 0f;
+    private float waitDuration = 2f;
+    private bool isWaiting = false;
+    private bool patrolInitialized = false;
 
     private void Awake()
     {
@@ -25,102 +36,141 @@ public class EnemyAI : MonoBehaviour
         corecorruption = FindFirstObjectByType<CorruptedCore>();
         health = 100;
 
+        // Initialize patrol points in a square or rectangle
+        originalPosition = transform.position;
+
+
+
+        patrolPoints.Add(originalPosition);
+        patrolPoints.Add(originalPosition + new Vector3(20, 0, 0));
+        patrolPoints.Add(originalPosition + new Vector3(25, 0, 7));
+        patrolPoints.Add(originalPosition + new Vector3(0, 0, 10));
     }
 
     private void Update()
-    {   
-        if (isAlive){
-        
-            if (health == 0){
-                Die();
-            }
-        if (corecorruption.isCleanse){
-                Die();
+    {
+        if (!isAlive) return;
+
+        if (health == 0 || (corecorruption != null && corecorruption.isCleanse))
+        {
+            Die();
+            return;
         }
-            playerInSight = CanSeePlayer() || Vector3.Distance(transform.position, player.position) <= closeRangeDetection;
-            playerInAttack = Vector3.Distance(transform.position, player.position) <= attackRange;
-            timeSinceLastAttack += Time.deltaTime;
-            if (playerInAttack && playerInSight && timeSinceLastAttack >= 3.6f){
-                AttackPlayer();
-                //Die();
-            }
-            else if (playerInSight){
-                ChasePlayer();
-            }
-            else{
-                Patrol();
-            }
+
+        playerInSight = CanSeePlayer() || Vector3.Distance(transform.position, player.position) <= closeRangeDetection;
+        playerInAttack = Vector3.Distance(transform.position, player.position) <= attackRange;
+        timeSinceLastAttack += Time.deltaTime;
+
+        if (playerInAttack && playerInSight && timeSinceLastAttack >= 3.6f)
+        {
+            AttackPlayer();
+        }
+        else if (playerInSight)
+        {
+            ChasePlayer();
+        }
+        else
+        {
+            Patrol();
         }
     }
 
-    private void Patrol()
-    {
-        
-        animator.SetBool("IsMoving", false);
-        // Implement patrol logic here
-        Debug.Log("patrolling");
-        LookAround();
+    private void Patrol(){
+        if (!patrolInitialized)
+        {
+            if (!agent.isOnNavMesh) return;
+            agent.SetDestination(patrolPoints[currentPatrolIndex]);
+            patrolInitialized = true;
+            animator.SetBool("IsMoving", true); // Start moving to first point
+        }
 
+        if (!isWaiting)
+        {
+            if (!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance + 0.2f)
+            {
+                // Arrived at patrol point
+                isWaiting = true;
+                waitTimer = 0f;
+                agent.isStopped = true;
+
+                // Stop movement animation, trigger idle
+                animator.SetBool("IsMoving", false);
+                animator.SetBool("IsIdle", true); // Optional: only if you use an explicit "Idle" trigger
+            }
+        }
+        else
+        {
+            waitTimer += Time.deltaTime;
+            if (waitTimer >= waitDuration)
+            {
+                // Done waiting
+                isWaiting = false;
+                currentPatrolIndex = (currentPatrolIndex + 1) % patrolPoints.Count;
+
+                // Resume movement
+                if (agent.isOnNavMesh)
+                {
+                    agent.SetDestination(patrolPoints[currentPatrolIndex]);
+                    agent.isStopped = false;
+                    animator.SetBool("IsMoving", true);
+                    animator.SetBool("IsIdle", false); // Optional: turn off Idle if used
+                }
+            }
+        }
     }
 
     private void ChasePlayer()
     {
-        if (!playerInAttack) // Ensure movement only if NOT in attack range
+        if (!playerInAttack && agent.isOnNavMesh)
         {
             agent.isStopped = false;
             animator.SetBool("IsMoving", true);
             agent.SetDestination(player.position);
-            Debug.Log("chasing");
+            Debug.Log("Chasing player...");
         }
     }
 
-    private void AttackPlayer(){
-        //animator.SetBool("IsMoving", false);
+    private void AttackPlayer()
+    {
         Debug.Log("Attacking Player!");
-        // Stop moving when attacking
-        //agent.SetDestination(transform.position);
-        // Attack logic (e.g., play attack animation)
         animator.SetTrigger("Attack");
-        // Attack logic (e.g., play attack animation)
-        playerstat.TakeDamage(10); // Dealing 10 damage to the player
+        playerstat.TakeDamage(10);
         Debug.Log("Player takes 10 damage!");
         timeSinceLastAttack = 0f;
     }
-    private bool CanSeePlayer(){
+
+    private bool CanSeePlayer()
+    {
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         float angle = Vector3.Angle(transform.forward, directionToPlayer);
-        
-        if (angle < 50f) // 50 degrees on both sides
+
+        if (angle < 50f)
         {
-            RaycastHit hit;
-            if (Physics.Raycast(transform.position, directionToPlayer, out hit, sightRange))
+            if (Physics.Raycast(transform.position, directionToPlayer, out RaycastHit hit, sightRange))
             {
-                return hit.transform == player; // Check if the player is actually seen
+                return hit.transform == player;
             }
         }
         return false;
     }
 
-    private void LookAround(){
-        
-        float randomAngle = Random.Range(-60f, 60f);
-        targetRotation = Quaternion.Euler(0, transform.eulerAngles.y + randomAngle, 0);
-        
-    }
-
-    private void Die(){
+    private void Die()
+    {
         isAlive = false;
-        animator.SetBool("Alive", isAlive);
+        animator.SetBool("Alive", false);
         animator.SetBool("IsMoving", false);
+        agent.isStopped = true;
         Destroy(gameObject, 6f);
     }
-    public void TakeDamage(int damage){
-        if (!isAlive){ 
-            return;
-        }
-        health -= damage;}
 
-    private void OnDrawGizmos(){
+    public void TakeDamage(int damage)
+    {
+        if (!isAlive) return;
+        health -= damage;
+    }
+
+    private void OnDrawGizmos()
+    {
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(transform.position, sightRange);
 

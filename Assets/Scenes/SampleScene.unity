@@ -3600,7 +3600,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 92841853}
-  numberOfEnemies: 15
+  numberOfEnemies: 0
   yPosition: 0.5
 --- !u!1 &2044912381
 GameObject:
@@ -3943,7 +3943,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7803492085659284925, guid: 92c21912742bde0428a6f4440562c5f6, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.84
+      value: -14.35
       objectReference: {fileID: 0}
     - target: {fileID: 7803492085659284925, guid: 92c21912742bde0428a6f4440562c5f6, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3982,8 +3982,16 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8081978012337063179, guid: 92c21912742bde0428a6f4440562c5f6, type: 3}
+      propertyPath: m_AutoRepath
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8081978012337063179, guid: 92c21912742bde0428a6f4440562c5f6, type: 3}
       propertyPath: m_StoppingDistance
       value: 2.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8081978012337063179, guid: 92c21912742bde0428a6f4440562c5f6, type: 3}
+      propertyPath: m_AutoTraverseOffMeshLink
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
