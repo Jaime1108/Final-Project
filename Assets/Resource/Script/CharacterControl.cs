@@ -48,6 +48,8 @@ public class CharacterControl : MonoBehaviour
     if (animator != null)
     {
         animator.SetBool("IsMoving", isMoving);
+        Debug.Log(isMoving);
+        
     }
 }
 
