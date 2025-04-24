@@ -27,7 +27,7 @@ public class PlayerAttack : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0) && isEquipped)
         {
-            Attack();
+            Attack("light");
         }
     }
 
@@ -120,11 +120,20 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
-    void Attack()
+    void Attack(string AttackType)
     {
         if (equippedWeapon == null) return;
 
-        animator.SetTrigger(equippedWeapon.attackTrigger);
+        switch (equippedWeapon.type){
+            case WeaponType.OneHanded:
+                animator.SetTrigger("1HAttack");
+                break;
+
+            case WeaponType.TwoHanded:
+                animator.SetTrigger("2HAttack");
+                break;
+            
+        }
         Debug.Log("Attacking with " + equippedWeapon.weaponName);
     }
 
