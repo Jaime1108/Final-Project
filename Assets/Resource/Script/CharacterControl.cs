@@ -1,80 +1,133 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CharacterControl : MonoBehaviour
 {
-    public float speed = 5f; // Movement speed
-    public float jumpForce = 7f; // Jump force
+    public float walkspeed = 3f;
+    public float sprintSpeed = 6f;
+    public float jumpForce = 7f;
+
+    public float maxStamina = 5f;
+    public float stamina;
+    public float staminaDrainRate = 1f;
+    public float staminaRecoveryRate = 1.5f;
+
+    public Slider staminaSlider;
 
     private Rigidbody rb;
     private Vector3 movementDirection;
     private bool isGrounded;
-    
+    private bool isSprinting = false;
+
     private Animator animator;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>(); // Get Rigidbody component
-        rb.freezeRotation = true; // Prevent unwanted rotation
+        rb = GetComponent<Rigidbody>();
+        rb.freezeRotation = true;
         animator = GetComponent<Animator>();
+        stamina = maxStamina;
+
+        if (staminaSlider != null)
+        {
+            staminaSlider.maxValue = 1f;
+            staminaSlider.value = 1f;
+        }
     }
 
     void Update()
     {
-        HandleMovementInput();
-        RotateCharacter();
-        CheckGroundStatus();
-        
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded) // Jump only if grounded
+        MovementControl();
+        rotateCharacter();
+        checkGroundStatus();
+
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            Jump();
+            jump();
         }
+
+        useStamina();
     }
 
     void FixedUpdate()
     {
-        MoveCharacter();
+        moveCharacter();
     }
 
-    void HandleMovementInput()
-{
-    float moveX = Input.GetAxisRaw("Horizontal"); // A/D or Left/Right
-    float moveZ = Input.GetAxisRaw("Vertical");   // W/S or Up/Down
-
-    movementDirection = new Vector3(moveX, 0f, moveZ).normalized; // Normalize to prevent diagonal speed boost
-
-    bool isMoving = movementDirection.magnitude > 0;
-    //Debug.Log($"MoveX: {moveX}, MoveZ: {moveZ}, IsMoving: {isMoving}");
-
-    if (animator != null)
+    void MovementControl()
     {
-        animator.SetBool("IsMoving", isMoving);
-        Debug.Log(isMoving);
-        
-    }
-}
+        float moveX = Input.GetAxisRaw("Horizontal");
+        float moveZ = Input.GetAxisRaw("Vertical");
 
-    void MoveCharacter()
-    {
-        Vector3 moveVelocity = movementDirection * speed;
-        rb.linearVelocity = new Vector3(moveVelocity.x, rb.linearVelocity.y, moveVelocity.z); // Keep Y velocity unchanged
-    }
+        movementDirection = new Vector3(moveX, 0f, moveZ).normalized;
 
-    void RotateCharacter()
-    {
-        if (movementDirection != Vector3.zero) // Rotate only when moving
+        bool wantsToSprint = Input.GetKey(KeyCode.LeftShift);
+        isSprinting = wantsToSprint && movementDirection.magnitude > 0 && stamina > 0;
+
+        bool isMoving = movementDirection.magnitude > 0;
+
+        if (animator != null)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(movementDirection);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f); // Smooth rotation
+            animator.SetBool("IsMoving", isMoving);
+            animator.SetBool("IsSprinting", isSprinting);
         }
     }
 
-    void Jump()
+    void moveCharacter()
     {
-        rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z); // Apply upward force
+        float currentSpeed = 0f;
+        if(isSprinting && stamina > 0.1f){
+            currentSpeed = sprintSpeed;
+        }
+        else{
+            currentSpeed = walkspeed;
+        }
+        Vector3 moveVelocity = movementDirection * currentSpeed;
+        rb.linearVelocity = new Vector3(moveVelocity.x, rb.linearVelocity.y, moveVelocity.z);
     }
 
-    void CheckGroundStatus()
+    void rotateCharacter()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.1f); // Simple ground check
+        if (movementDirection != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(movementDirection);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime * 10f);
+        }
+    }
+
+    void jump()
+    {
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
+
+        if (animator != null)
+        {
+            animator.SetTrigger("Jump");
+        }
+    }
+
+    void checkGroundStatus()
+    {
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
+    }
+
+    void useStamina()
+    {
+        if (isSprinting)
+        {
+            stamina -= staminaDrainRate * Time.deltaTime;
+        }
+        else if (stamina < maxStamina)
+        {
+            stamina += staminaRecoveryRate * Time.deltaTime;
+        }
+
+        stamina = Mathf.Clamp(stamina, 0f, maxStamina);
+
+        if (staminaSlider != null)
+        {
+            staminaSlider.value = stamina / maxStamina;
+        }
+
+        Debug.Log($"Current Stamina: {stamina:F2}");
     }
 }

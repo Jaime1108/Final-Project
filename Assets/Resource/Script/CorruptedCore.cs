@@ -29,7 +29,7 @@ public class CorruptedCore : MonoBehaviour
             
         }
         else{
-            Debug.LogWarning("Player not found! Make sure the Player GameObject has the tag 'Player'.");
+             Debug.LogWarning("Player not found! Make sure the Player GameObject has the tag 'Player'.");
         }
     }
 
