@@ -7,9 +7,9 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Skeleton-texture
+  m_Name: stoneFloor
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 2100000, guid: a06c321d048e5e045bca7781a864c41b, type: 2}
+  m_Parent: {fileID: 2100000, guid: c32dbdb4864bd244498dc2276d40e3d6, type: 2}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -21,13 +21,13 @@ Material:
     RenderType: Opaque
   disabledShaderPasses:
   - MOTIONVECTORS
-  m_LockedProperties: 
+  m_LockedProperties: _BaseColor _BaseMap
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 8a647b9bcfaab2d4294451f3335f3381, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 1b296ae3d4fabd74daabe372f9a2fa4f, type: 3}
+        m_Scale: {x: 5, y: 5}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
@@ -38,31 +38,19 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 8a647b9bcfaab2d4294451f3335f3381, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MetallicGlossMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _OcclusionMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _ParallaxMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 1b296ae3d4fabd74daabe372f9a2fa4f, type: 3}
+        m_Scale: {x: 5, y: 5}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Smoothness: 0.5
+    - _Smoothness: 0
     - _SmoothnessTextureChannel: 0
     m_Colors:
-    - _BaseColor: {r: 0.6830188, g: 0.5812103, b: 0.5812103, a: 1}
-    - _Color: {r: 0.68301874, g: 0.58121026, b: 0.58121026, a: 1}
+    - _BaseColor: {r: 0.509434, g: 0.509434, b: 0.509434, a: 0.5}
+    - _Color: {r: 0.509434, g: 0.509434, b: 0.509434, a: 0.5}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &9158289763434493714
+--- !u!114 &858403626499944441
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

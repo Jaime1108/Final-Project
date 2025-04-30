@@ -23,12 +23,15 @@ public class EnemyAI : MonoBehaviour
     private List<Vector3> patrolPoints = new List<Vector3>();
     private int currentPatrolIndex = 0;
     private float waitTimer = 0f;
-    private float waitDuration = 2f;
+    private float waitDuration = 5f;
+
+    public int numberOfPatrolPoints = 4;
+    public float patrolRadius = 15f;
+
     private bool isWaiting = false;
     private bool patrolInitialized = false;
 
-    private void Awake()
-    {
+    private void Awake(){
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
@@ -36,16 +39,28 @@ public class EnemyAI : MonoBehaviour
         corecorruption = FindFirstObjectByType<CorruptedCore>();
         health = 100;
 
-        // Initialize patrol points in a square or rectangle
         originalPosition = transform.position;
 
+        // Generate random patrol points around original position
+        for (int i = 0; i < numberOfPatrolPoints; i++)
+        {
+            Vector2 randomCircle = Random.insideUnitCircle * patrolRadius;
+            Vector3 randomPoint = originalPosition + new Vector3(randomCircle.x, 0, randomCircle.y);
 
+            // Sample nearest point on NavMesh
+            if (NavMesh.SamplePosition(randomPoint, out NavMeshHit hit, 3f, NavMesh.AllAreas))
+            {
+                patrolPoints.Add(hit.position);
+            }
+        }
 
-        patrolPoints.Add(originalPosition);
-        patrolPoints.Add(originalPosition + new Vector3(20, 0, 0));
-        patrolPoints.Add(originalPosition + new Vector3(25, 0, 7));
-        patrolPoints.Add(originalPosition + new Vector3(0, 0, 10));
+        // Ensure at least 1 patrol point
+        if (patrolPoints.Count == 0)
+        {
+            patrolPoints.Add(originalPosition);
+        }
     }
+
 
     private void Update()
     {
