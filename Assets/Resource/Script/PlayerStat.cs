@@ -9,6 +9,8 @@ public class PlayerStat : MonoBehaviour
     public float healingRate = 1f; // Rate of health recovery per second while using potion.
     public int potionCount = 2;
     public int holyWaterCount = 1;
+    public int keyCount = 1; // Number of keys the player has
+
     private UserInterface userinterface;
     private void Start()
     {

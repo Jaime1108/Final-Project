@@ -16,14 +16,14 @@ public class CorruptedCore : MonoBehaviour
     private float timeOutsideDefense = 0f;
     public Light pointLight;
     public PlayerStat playerstat;
-    private UserInterface userinterface;
+    public UserInterface userinterface;
 
     void Start()
     {
         // Find the player GameObject by tag
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
         playerstat = FindFirstObjectByType<PlayerStat>();
-        userinterface = FindFirstObjectByType<UserInterface>();
+        //userinterface = FindFirstObjectByType<UserInterface>();
         if (playerObj != null){
             player = playerObj.transform;
             
