@@ -32,7 +32,6 @@ public class Chest : MonoBehaviour
         if (!isOpened)
         {
             userinterface.currentActionText.text = "Press [F] to unlock";
-
             if (Input.GetKeyDown(KeyCode.F))
             {
                 if (player.keyCount > 0)
