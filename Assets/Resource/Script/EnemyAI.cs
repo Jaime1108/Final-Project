@@ -16,7 +16,7 @@ public class EnemyAI : MonoBehaviour
     private PlayerStat playerstat;
     private float timeSinceLastAttack = 0f;
     private bool isAlive = true;
-    private CorruptedCore corecorruption;
+    public CorruptedCore corecorruption;
 
     // Patrol Variables
     private Vector3 originalPosition;
@@ -36,7 +36,6 @@ public class EnemyAI : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         playerstat = player.GetComponent<PlayerStat>();
-        corecorruption = FindFirstObjectByType<CorruptedCore>();
         health = 100;
 
         originalPosition = transform.position;
