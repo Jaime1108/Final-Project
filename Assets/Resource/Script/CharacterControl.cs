@@ -7,32 +7,25 @@ public class CharacterControl : MonoBehaviour
     public float sprintSpeed = 6f;
     public float jumpForce = 7f;
 
-    public float maxStamina = 5f;
-    public float stamina;
     public float staminaDrainRate = 1f;
     public float staminaRecoveryRate = 1.5f;
 
-    public Slider staminaSlider;
+    public PlayerStat playerStat;
 
     private Rigidbody rb;
     private Vector3 movementDirection;
     private bool isGrounded;
-    private bool isSprinting = false;
+    public bool isMoving = false;
+    public bool isSprinting = false;
 
     private Animator animator;
 
     void Start()
     {
+        playerStat = FindFirstObjectByType<PlayerStat>();
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         animator = GetComponent<Animator>();
-        stamina = maxStamina;
-
-        if (staminaSlider != null)
-        {
-            staminaSlider.maxValue = 1f;
-            staminaSlider.value = 1f;
-        }
     }
 
     void Update()
@@ -45,7 +38,8 @@ public class CharacterControl : MonoBehaviour
         {
             jump();
         }
-
+        animator.SetBool("IsMoving", isMoving);
+        animator.SetBool("IsSprinting", isSprinting);
         useStamina();
     }
 
@@ -62,21 +56,20 @@ public class CharacterControl : MonoBehaviour
         movementDirection = new Vector3(moveX, 0f, moveZ).normalized;
 
         bool wantsToSprint = Input.GetKey(KeyCode.LeftShift);
-        isSprinting = wantsToSprint && movementDirection.magnitude > 0 && stamina > 0;
+        isSprinting = wantsToSprint && movementDirection.magnitude > 0 && playerStat.stamina > 0;
 
-        bool isMoving = movementDirection.magnitude > 0;
+        isMoving = movementDirection.magnitude > 0;
 
         if (animator != null)
         {
-            animator.SetBool("IsMoving", isMoving);
-            animator.SetBool("IsSprinting", isSprinting);
+            
         }
     }
 
     void moveCharacter()
     {
         float currentSpeed = 0f;
-        if(isSprinting && stamina > 0.1f){
+        if(isSprinting && playerStat.stamina > 0.1f){
             currentSpeed = sprintSpeed;
         }
         else{
@@ -114,20 +107,16 @@ public class CharacterControl : MonoBehaviour
     {
         if (isSprinting)
         {
-            stamina -= staminaDrainRate * Time.deltaTime;
+            playerStat.stamina -= staminaDrainRate * Time.deltaTime;
         }
-        else if (stamina < maxStamina)
+        else if (playerStat.stamina < playerStat.maxStamina)
         {
-            stamina += staminaRecoveryRate * Time.deltaTime;
+            playerStat.stamina += staminaRecoveryRate * Time.deltaTime;
         }
 
-        stamina = Mathf.Clamp(stamina, 0f, maxStamina);
+        playerStat.stamina = Mathf.Clamp(playerStat.stamina, 0f, playerStat.maxStamina);  
 
-        if (staminaSlider != null)
-        {
-            staminaSlider.value = stamina / maxStamina;
-        }
 
-        Debug.Log($"Current Stamina: {stamina:F2}");
+        Debug.Log($"Current Stamina: {playerStat.stamina:F2}");
     }
 }

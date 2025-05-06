@@ -10,11 +10,14 @@ public class PlayerStat : MonoBehaviour
     public int potionCount = 2;
     public int holyWaterCount = 1;
     public int keyCount = 1; // Number of keys the player has
+    public float maxStamina = 5f;
+    public float stamina;
 
     private UserInterface userinterface;
     private void Start()
     {
-        currentHealth = maxHealth; // Initialize health.
+        currentHealth = maxHealth; // Initialize health and stamina.
+        stamina = maxStamina;
         Debug.Log("Player start health: " + currentHealth);
         userinterface = FindFirstObjectByType<UserInterface>();
     }

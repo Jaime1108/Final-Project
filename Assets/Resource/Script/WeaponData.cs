@@ -11,7 +11,12 @@ public class WeaponData : MonoBehaviour
 {
     public string weaponName;
     public int damage;
-    //public GameObject weaponPrefab;
+    public GameObject Sword;
     public WeaponType type;
-    public string attackTrigger;
+    void Start()
+    {
+        // autoassign this GameObject to Sword
+        Sword = this.gameObject;
+    }
+
 }

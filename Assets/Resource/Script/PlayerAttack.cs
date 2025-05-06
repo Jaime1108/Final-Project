@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    public GameObject[] weapons; // Assign inactive weapons in Inspector
+    public GameObject[] weapons= new GameObject[2]; // Assign inactive weapons in Inspector
     private int currentWeaponIndex = 0;
     public GameObject weaponHolder; // Parent object in right hand
     private GameObject currentWeapon;
@@ -10,10 +10,20 @@ public class PlayerAttack : MonoBehaviour
     private Animator animator;
 
     private bool isEquipped = false; // NEW: Track if weapon is currently active
+    public bool oneHandWeapon = false;
+    public bool twoHandWeapon = false;
 
     void Start()
     {
         animator = GetComponent<Animator>();
+
+        // Instantiatedefault weapons into weaponHolder
+        GameObject weapon = Instantiate(weapons[0], weaponHolder.transform);
+        weapons[0] = weapon;
+        weapon.SetActive(false);
+
+    
+
         EquipWeapon(currentWeaponIndex); // Equip default at start
     }
 
@@ -21,13 +31,15 @@ public class PlayerAttack : MonoBehaviour
     {
         HandleAttackInput();
         HandleWeaponSwitchInput();
+        animator.SetBool("HasShortSword", oneHandWeapon);
+        animator.SetBool("HasLongSword", twoHandWeapon);
     }
 
     void HandleAttackInput()
     {
         if (Input.GetMouseButtonDown(0) && isEquipped)
         {
-            Attack("light");
+            animator.SetTrigger("LightAttack");
         }
     }
 
@@ -69,6 +81,33 @@ public class PlayerAttack : MonoBehaviour
         }
     }
 
+    public void PickupWeapon(WeaponData newWeaponData){
+        int slotIndex = 0;
+        if (newWeaponData.type == WeaponType.OneHanded){
+            slotIndex = 0; // One-handed weapons go to slot 0
+        }else{
+            slotIndex = 1;
+        }
+         if (slotIndex >= weapons.Length){
+            Debug.LogError("Weapons array is too small for slot " + slotIndex);
+            return;
+        }
+
+        // if there’s already a weapon in this slot, remove it
+        if (weapons[slotIndex] != null){
+            weapons[slotIndex] = null;
+        }
+
+        // instantiate the new weapon and parent it to the weaponHolder
+        GameObject newWeapon = Instantiate(newWeaponData.Sword, weaponHolder.transform);
+        newWeapon.SetActive(false);
+
+        // Assign it to the correct slot
+        weapons[slotIndex] = newWeapon;
+
+        Debug.Log($"Picked up {newWeaponData.weaponName} and placed in slot {slotIndex}");
+    }
+
     void EquipWeapon(int index)
     {
         if (index < 0 || index >= weapons.Length)
@@ -86,12 +125,15 @@ public class PlayerAttack : MonoBehaviour
         currentWeapon.SetActive(true);
         isEquipped = true;
         WeaponData weaponData = currentWeapon.GetComponent<WeaponData>();
-        if (weaponData.type == WeaponType.OneHanded){
-            animator.SetBool("HasShortSword", true);
+        if(weaponData.type == WeaponType.OneHanded){
+            oneHandWeapon = true;
+            twoHandWeapon = false;
+            
         }
-        else
-        {
-            animator.SetBool("HasShortSword", false);
+        else if(weaponData.type == WeaponType.TwoHanded) {
+            oneHandWeapon = false;
+            twoHandWeapon = true;
+            
         }
         
 
@@ -109,10 +151,12 @@ public class PlayerAttack : MonoBehaviour
     {
         WeaponData weaponData = currentWeapon.GetComponent<WeaponData>();
         if (weaponData.type == WeaponType.OneHanded){
-            animator.SetBool("HasShortSword", false);
+            oneHandWeapon =  false;
         }
-        if (currentWeapon != null)
-        {
+        else{
+            twoHandWeapon = false;
+        }
+        if (currentWeapon != null){
             currentWeapon.SetActive(false);
             equippedWeapon = null;
             isEquipped = false;
@@ -124,16 +168,7 @@ public class PlayerAttack : MonoBehaviour
     {
         if (equippedWeapon == null) return;
 
-        switch (equippedWeapon.type){
-            case WeaponType.OneHanded:
-                animator.SetTrigger("1HAttack");
-                break;
-
-            case WeaponType.TwoHanded:
-                animator.SetTrigger("2HAttack");
-                break;
-            
-        }
+        
         Debug.Log("Attacking with " + equippedWeapon.weaponName);
     }
 
@@ -148,5 +183,14 @@ public class PlayerAttack : MonoBehaviour
                 Debug.Log("Hit enemy! Dealt " + equippedWeapon.damage + " damage.");
             }
         }
+        else if (other.CompareTag("Boss")){
+            BossAIScript boss  = other.GetComponent<BossAIScript>();
+            if (boss  != null && equippedWeapon != null)
+            {
+                boss.TakeDamage(equippedWeapon.damage);
+                Debug.Log("Hit boss! Dealt " + equippedWeapon.damage + " damage.");
+            }
+        }
+        
     }
 }

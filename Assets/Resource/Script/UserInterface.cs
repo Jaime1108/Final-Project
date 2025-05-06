@@ -10,6 +10,7 @@ public class UserInterface : MonoBehaviour
     public TMP_Text holyWaterCountText;
     //public Text weaponSlotText;
     public Image healthSlider;
+    public Image staminaSlider;
     public TMP_Text currentHealth;
     private  PlayerStat playerstat;
     public TMP_Text currentActionText;
@@ -28,6 +29,7 @@ public class UserInterface : MonoBehaviour
         holyWaterCountText.text = $"Holy Water: {playerstat.holyWaterCount}";
 
         healthSlider.fillAmount= (float)playerstat.currentHealth/playerstat.maxHealth;
+        staminaSlider.fillAmount= (float)playerstat.stamina/playerstat.maxStamina;
     }
 
 }

@@ -30,6 +30,7 @@ public class EnemyAI : MonoBehaviour
 
     private bool isWaiting = false;
     private bool patrolInitialized = false;
+    public AIState AIState;
 
     private void Awake(){
         player = GameObject.Find("Player").transform;
@@ -65,7 +66,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (!isAlive) return;
 
-        if (health == 0 || (corecorruption != null && corecorruption.isCleanse))
+        if (health <= 0 || (corecorruption != null && corecorruption.isCleanse))
         {
             Die();
             return;
@@ -90,8 +91,10 @@ public class EnemyAI : MonoBehaviour
     }
 
     private void Patrol(){
+        AIState.State="Patrol";
         if (!patrolInitialized)
         {
+            
             if (!agent.isOnNavMesh) return;
             agent.SetDestination(patrolPoints[currentPatrolIndex]);
             patrolInitialized = true;
@@ -137,6 +140,7 @@ public class EnemyAI : MonoBehaviour
     {
         if (!playerInAttack && agent.isOnNavMesh)
         {
+            AIState.State="Chase";
             agent.isStopped = false;
             animator.SetBool("IsMoving", true);
             agent.SetDestination(player.position);
@@ -146,10 +150,9 @@ public class EnemyAI : MonoBehaviour
 
     private void AttackPlayer()
     {
+        AIState.State="Attack";
         Debug.Log("Attacking Player!");
         animator.SetTrigger("Attack");
-        playerstat.TakeDamage(10);
-        Debug.Log("Player takes 10 damage!");
         timeSinceLastAttack = 0f;
     }
 
