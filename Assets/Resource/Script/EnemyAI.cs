@@ -112,7 +112,7 @@ public class EnemyAI : MonoBehaviour
 
                 // Stop movement animation, trigger idle
                 animator.SetBool("IsMoving", false);
-                animator.SetBool("IsIdle", true); // Optional: only if you use an explicit "Idle" trigger
+
             }
         }
         else
@@ -130,7 +130,6 @@ public class EnemyAI : MonoBehaviour
                     agent.SetDestination(patrolPoints[currentPatrolIndex]);
                     agent.isStopped = false;
                     animator.SetBool("IsMoving", true);
-                    animator.SetBool("IsIdle", false); // Optional: turn off Idle if used
                 }
             }
         }
@@ -144,7 +143,7 @@ public class EnemyAI : MonoBehaviour
             agent.isStopped = false;
             animator.SetBool("IsMoving", true);
             agent.SetDestination(player.position);
-            Debug.Log("Chasing player...");
+            //Debug.Log("Chasing player...");
         }
     }
 

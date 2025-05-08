@@ -19,13 +19,24 @@ public class CharacterControl : MonoBehaviour
     public bool isSprinting = false;
 
     private Animator animator;
+    public AudioSource walking;
+    public AudioClip walkingClip;
+    public AudioManager audioManager;
+    float volumeSFX;
 
     void Start()
     {
+        audioManager = FindFirstObjectByType<AudioManager>();
+        if (audioManager == null){
+            volumeSFX = 1f;
+        }else{
+            volumeSFX= audioManager.masterVolume*audioManager.sfxVolume;
+        }
         playerStat = FindFirstObjectByType<PlayerStat>();
         rb = GetComponent<Rigidbody>();
         rb.freezeRotation = true;
         animator = GetComponent<Animator>();
+        walking.volume = volumeSFX*0.5f;
     }
 
     void Update()
@@ -41,6 +52,16 @@ public class CharacterControl : MonoBehaviour
         animator.SetBool("IsMoving", isMoving);
         animator.SetBool("IsSprinting", isSprinting);
         useStamina();
+        if (isMoving){
+            if (!walking.isPlaying){
+                walking.Play();
+            }
+        }
+        else{
+            if (walking.isPlaying){
+                walking.Stop();
+            }
+        }
     }
 
     void FixedUpdate()

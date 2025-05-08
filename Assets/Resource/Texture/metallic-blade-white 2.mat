@@ -7,11 +7,12 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: metallic white
+  m_Name: metallic-blade-white 2
   m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
-  m_Parent: {fileID: 2100000, guid: a06c321d048e5e045bca7781a864c41b, type: 2}
+  m_Parent: {fileID: 2100000, guid: 1525e13bc14eaed4c96ab708733d86b1, type: 2}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _SPECULARHIGHLIGHTS_OFF
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -26,21 +27,21 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseMap:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Texture: {fileID: 2800000, guid: 9d64f9ff274bf9446ab72a9039a055e8, type: 3}
+        m_Scale: {x: 2, y: 2}
+        m_Offset: {x: 3, y: 3}
     - _BumpMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Scale: {x: 20, y: 20}
+        m_Offset: {x: 30, y: 30}
     - _MainTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+        m_Texture: {fileID: 2800000, guid: 9d64f9ff274bf9446ab72a9039a055e8, type: 3}
+        m_Scale: {x: 2, y: 2}
+        m_Offset: {x: 3, y: 3}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -58,9 +59,10 @@ Material:
     - _Metallic: 1
     - _Smoothness: 1
     - _SmoothnessTextureChannel: 0
+    - _SpecularHighlights: 0
     m_Colors:
-    - _BaseColor: {r: 0.94716984, g: 0.94716984, b: 0.94716984, a: 1}
-    - _Color: {r: 0.94716984, g: 0.94716984, b: 0.94716984, a: 1}
+    - _BaseColor: {r: 0.6981132, g: 0.36749732, b: 0.36749732, a: 1}
+    - _Color: {r: 0.6981132, g: 0.3674973, b: 0.3674973, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
 --- !u!114 &1205740667664461

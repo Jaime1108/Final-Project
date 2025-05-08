@@ -15,7 +15,6 @@ public class WeaponPickup : MonoBehaviour
     private void Start(){
         userInterface = FindFirstObjectByType<UserInterface>();
         playerAttack = FindFirstObjectByType<PlayerAttack>();
-        weaponData = FindFirstObjectByType<WeaponData>();
     }
 
     private void OnTriggerEnter(Collider other)

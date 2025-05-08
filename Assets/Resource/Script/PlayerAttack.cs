@@ -2,29 +2,37 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    public GameObject[] weapons= new GameObject[2]; // Assign inactive weapons in Inspector
+    public GameObject[] weapons= new GameObject[2]; // weapon slot
     private int currentWeaponIndex = 0;
     public GameObject weaponHolder; // Parent object in right hand
     private GameObject currentWeapon;
     private WeaponData equippedWeapon;
     private Animator animator;
+    public UserInterface userInterface;
 
     private bool isEquipped = false; // NEW: Track if weapon is currently active
     public bool oneHandWeapon = false;
     public bool twoHandWeapon = false;
+    private int lastAttackDamage = 0;
+
+
+    //audio source
+    public AudioManager audioManager;
 
     void Start()
     {
+        audioManager = FindFirstObjectByType<AudioManager>();
         animator = GetComponent<Animator>();
 
         // Instantiatedefault weapons into weaponHolder
         GameObject weapon = Instantiate(weapons[0], weaponHolder.transform);
         weapons[0] = weapon;
         weapon.SetActive(false);
-
+        userInterface = FindFirstObjectByType<UserInterface>();
     
 
         EquipWeapon(currentWeaponIndex); // Equip default at start
+        userInterface.weaponDamage.text = "";
     }
 
     void Update()
@@ -37,49 +45,70 @@ public class PlayerAttack : MonoBehaviour
 
     void HandleAttackInput()
     {
-        if (Input.GetMouseButtonDown(0) && isEquipped)
-        {
+        if (Input.GetMouseButtonDown(0) && isEquipped){
             animator.SetTrigger("LightAttack");
+            lastAttackDamage = equippedWeapon.damage; 
+            Invoke(nameof(LightAttackSFX),0.2f);
+        }else if (Input.GetMouseButtonDown(1) && isEquipped){
+            animator.SetTrigger("HeavyAttack");
+            lastAttackDamage = equippedWeapon.damage + equippedWeapon.damage/2 ;
+            if(twoHandWeapon){
+                Invoke(nameof(HeavyAttackSFX),0.7f);
+                
+            }
+            else{
+                Invoke(nameof(LightAttackSFX),0.4f);
+            }
         }
+
+    }
+    void HeavyAttackSFX(){
+        audioManager.PlaySFX("Heavy Attack");
     }
 
-    void HandleWeaponSwitchInput()
-    {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            if (currentWeaponIndex == 0 && isEquipped)
-            {
-                UnequipWeapon(); // Double-tap = sheathe
-            }
-            else
-            {
-                currentWeaponIndex = 0;
-                EquipWeapon(0);
-            }
-        }
+    void LightAttackSFX(){
+        audioManager.PlaySFX("Sword Swing");
+    }
 
-        if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            if (weapons.Length > 1)
-            {
-                if (currentWeaponIndex == 1 && isEquipped)
+    void HandleWeaponSwitchInput(){
+        if (Input.GetKeyDown(KeyCode.Alpha1)){
+            if (weapons[0] != null){
+                if (currentWeaponIndex == 0 && isEquipped)
                 {
-                    UnequipWeapon();
+                    UnequipWeapon();}// double-tap = sheathe
+                else{
+                    currentWeaponIndex = 0;
+                    EquipWeapon(0);
                 }
-                else
-                {
+            }
+            else{
+                UnequipWeapon();}
+        }
+        
+        if (Input.GetKeyDown(KeyCode.Alpha2)){
+            if (weapons.Length > 1 && weapons[1] != null){
+                if (currentWeaponIndex == 1 && isEquipped){
+                    UnequipWeapon();}
+                else{
                     currentWeaponIndex = 1;
-                    EquipWeapon(1);
-                }
-            }
+                    EquipWeapon(1);}
+            }else{
+                Debug.Log("No weapon in slot 2!");
+                UnequipWeapon();}
         }
 
-        if (Input.GetKeyDown(KeyCode.Tab))
-        {
-            currentWeaponIndex = (currentWeaponIndex + 1) % weapons.Length;
-            EquipWeapon(currentWeaponIndex);
+        if (Input.GetKeyDown(KeyCode.Tab)){
+            int nextIndex = (currentWeaponIndex + 1) % weapons.Length;
+            if (weapons[nextIndex] != null){
+                currentWeaponIndex = nextIndex;
+                EquipWeapon(nextIndex);
+            }
+            else{
+                Debug.Log($"No weapon in slot {nextIndex + 1}!");
+                UnequipWeapon();}
         }
     }
+
 
     public void PickupWeapon(WeaponData newWeaponData){
         int slotIndex = 0;
@@ -107,7 +136,6 @@ public class PlayerAttack : MonoBehaviour
 
         Debug.Log($"Picked up {newWeaponData.weaponName} and placed in slot {slotIndex}");
     }
-
     void EquipWeapon(int index)
     {
         if (index < 0 || index >= weapons.Length)
@@ -143,8 +171,9 @@ public class PlayerAttack : MonoBehaviour
             Debug.LogError("WeaponData is missing on " + currentWeapon.name);
             return;
         }
-
+        
         Debug.Log("Equipped: " + equippedWeapon.weaponName);
+        userInterface.weaponDamage.text = "" + equippedWeapon.damage;
     }
 
     void UnequipWeapon()
@@ -162,24 +191,18 @@ public class PlayerAttack : MonoBehaviour
             isEquipped = false;
             Debug.Log("Weapon sheathed.");
         }
+        userInterface.weaponDamage.text = "";
     }
 
-    void Attack(string AttackType)
-    {
-        if (equippedWeapon == null) return;
-
-        
-        Debug.Log("Attacking with " + equippedWeapon.weaponName);
-    }
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Enemy"))
-        {
+        if (other.CompareTag("Enemy")){
             EnemyAI enemy = other.GetComponent<EnemyAI>();
             if (enemy != null && equippedWeapon != null)
             {
-                enemy.TakeDamage(equippedWeapon.damage);
+                enemy.TakeDamage(lastAttackDamage);
+                audioManager.PlaySFX("Attack Skeleton");
                 Debug.Log("Hit enemy! Dealt " + equippedWeapon.damage + " damage.");
             }
         }
@@ -187,7 +210,8 @@ public class PlayerAttack : MonoBehaviour
             BossAIScript boss  = other.GetComponent<BossAIScript>();
             if (boss  != null && equippedWeapon != null)
             {
-                boss.TakeDamage(equippedWeapon.damage);
+                boss.TakeDamage(lastAttackDamage);
+                audioManager.PlaySFX("Boss Hit");
                 Debug.Log("Hit boss! Dealt " + equippedWeapon.damage + " damage.");
             }
         }

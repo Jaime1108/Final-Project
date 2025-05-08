@@ -8,65 +8,47 @@ public class Chest : MonoBehaviour
     public Transform chestLid;          // The lid to animate
     public float openAngle = 120f;
     public float openSpeed = 90f;
-
-
     public UserInterface userinterface;
     public ItemSpawner itemSpawner;     // Reference to the item spawner inside chest
-
-    private bool playerInRange = false;
+    public GameObject itemSpawnArea;
+    private bool inRange = false;
     private bool isOpened = false;
     private bool itemsCollected = false;
     private int itemCount = 0;
+    private PlayerStat player;
 
-    private void Start()
-    {
+    private void Start(){
+        player = FindFirstObjectByType<PlayerStat>();
     }
 
-    private void Update()
-    {
-        if (!playerInRange) return;
-
-        PlayerStat player = GameObject.FindWithTag("Player")?.GetComponent<PlayerStat>();
-        if (player == null) return;
-
-        if (!isOpened)
-        {
-            userinterface.currentActionText.text = "Press [F] to unlock";
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                if (player.keyCount > 0)
-                {
-                    player.keyCount--;
-                    OpenChest();
-                }
-                else
-                {
-                    userinterface.currentActionText.text =  "You need a key to unlock this chest!";
+    private void Update(){
+        if (inRange){
+            if (!isOpened){
+                userinterface.currentActionText.text = "Press [F] to unlock";
+                if (Input.GetKeyDown(KeyCode.F)){
+                    if (player.keyCount > 0){
+                        player.keyCount--;
+                        OpenChest();}
+                    else{
+                        userinterface.currentActionText.text =  "You need a key to unlock this chest!";
+                    }
                 }
             }
-        }
-        else if (!itemsCollected)
-        {
-            userinterface.currentActionText.text = $"Press [E] to collect {itemCount} item(s)";
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                CollectItems(player);
+            else if (!itemsCollected){
+                userinterface.currentActionText.text = $"Press [E] to collect {itemCount} item(s)";
+                if (Input.GetKeyDown(KeyCode.E)){
+                    CollectItems(player);}
             }
-        }
-        else
-        {
-            userinterface.currentActionText.text = "Chest is empty.";
+            else{
+                userinterface.currentActionText.text = "Chest is empty.";}
         }
     }
 
-    private void OpenChest()
-    {
+    private void OpenChest(){
         isOpened = true;
         StartCoroutine(RotateLid());
-
-        if (itemSpawner != null)
-        {
-            itemCount = itemSpawner.SpawnPotionsAndReturnCount();
+        if (itemSpawner != null){
+            itemCount = itemSpawner.numberOfItemSpawning;
         }
     }
 
@@ -74,20 +56,12 @@ public class Chest : MonoBehaviour
         itemsCollected = true;
         // Add all potions to player inventory
         player.potionCount += itemCount;
-
-        Debug.Log($"Collected {itemCount} potion(s)");
         userinterface.currentActionText.text = $"Collected {itemCount} potion(s)";
-
-        // Destroy all spawned items inside the itemSpawner
-        foreach (Transform child in itemSpawner.transform)
-        {
-            Destroy(child.gameObject);
-        }
+        Destroy(itemSpawnArea);
     }
 
 
-    private IEnumerator RotateLid()
-    {
+    private IEnumerator RotateLid(){
         float currentAngle = 0f;
         while (currentAngle < openAngle)
         {
@@ -103,19 +77,16 @@ public class Chest : MonoBehaviour
         chestLid.localEulerAngles = euler;
     }
 
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("Player"))
-        {
-            playerInRange = true;
+    private void OnTriggerEnter(Collider other){
+        if (other.CompareTag("Player")){
+            inRange = true;
         }
     }
 
-    private void OnTriggerExit(Collider other)
-    {
+    private void OnTriggerExit(Collider other){
         if (other.CompareTag("Player"))
         {
-            playerInRange = false;
+            inRange = false;
             userinterface.currentActionText.text = "";
         }
     }
