@@ -274,6 +274,7 @@ MonoBehaviour:
   corecorruption: {fileID: 0}
   numberOfPatrolPoints: 4
   patrolRadius: 15
+  keyPrefab: {fileID: 7020847370499925887, guid: b4db6d1017f4eb648bc1444ade51aff6, type: 3}
   AIState: {fileID: 4891792167385675010}
 --- !u!195 &8081978012337063179
 NavMeshAgent:

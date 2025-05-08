@@ -30,6 +30,10 @@ public class EnemyAI : MonoBehaviour
 
     private bool isWaiting = false;
     private bool patrolInitialized = false;
+
+    //Dropping key rate
+    public GameObject keyPrefab;
+    private float keyDropChance = 0.9f;
     public AIState AIState;
 
     private void Awake(){
@@ -175,7 +179,19 @@ public class EnemyAI : MonoBehaviour
         isAlive = false;
         animator.SetBool("Alive", false);
         animator.SetBool("IsMoving", false);
-        agent.isStopped = true;
+        if (agent.isOnNavMesh)
+        {
+            agent.isStopped = true;
+        }
+
+
+        if (Random.value <= keyDropChance){ // Roll for key drop
+            if (keyPrefab != null){
+                Instantiate(keyPrefab, transform.position, Quaternion.identity);
+                
+            }
+        }
+
         Destroy(gameObject, 6f);
     }
 

@@ -8,6 +8,7 @@ public class UserInterface : MonoBehaviour
     public PlayerStat PlayerStat;
     public TMP_Text potionCountText;
     public TMP_Text holyWaterCountText;
+    public TMP_Text keyCountText;
     //public Text weaponSlotText;
     public Image healthSlider;
     public Image staminaSlider;
@@ -15,18 +16,25 @@ public class UserInterface : MonoBehaviour
     private  PlayerStat playerstat;
     public TMP_Text currentActionText;
     public TMP_Text weaponDamage;
+    public AudioManager audioManager;
 
     // pause game 
     public GameObject pauseMenuUI;
+    public GameObject VictoryPanel;
+    public GameObject DefeatPanel;
     private bool isPaused = false;
+    public CorruptedAltar corruptedAltar;
     void Start(){
+        audioManager = FindFirstObjectByType<AudioManager>();
         playerstat = FindFirstObjectByType<PlayerStat>();
+        corruptedAltar = FindFirstObjectByType<CorruptedAltar>();
     }
 
     void Update(){
         currentHealth.text = $"{playerstat.currentHealth}/{playerstat.maxHealth}";
         potionCountText.text = $"Potions: {playerstat.potionCount}";
         holyWaterCountText.text = $"Holy Water: {playerstat.holyWaterCount}";
+        keyCountText.text = $"Keys: {playerstat.keyCount}";;
 
         healthSlider.fillAmount= (float)playerstat.currentHealth/playerstat.maxHealth;
         staminaSlider.fillAmount= (float)playerstat.stamina/playerstat.maxStamina;
@@ -34,7 +42,30 @@ public class UserInterface : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Escape)){
             TogglePause();
         }
+        if(corruptedAltar.isCleanse){
+            Invoke("Victory", 10f);
+        }
     }
+
+    public void Victory(){
+        if (VictoryPanel != null){            
+            VictoryPanel.SetActive(true);
+            Time.timeScale = 0f; // Freeze game time
+        }
+    }
+
+    public void Defeat(){
+        Invoke("DefeatScreen", 3f);
+    }
+    public void DefeatScreen(){
+        if (DefeatPanel != null){
+            audioManager.musicSource.loop = false;
+            audioManager.PlayMusic("Defeat");
+            DefeatPanel.SetActive(true);
+            Time.timeScale = 0f; // Freeze game time
+        }
+    }
+
     public void TogglePause(){
         if(isPaused){
             ResumeGame();

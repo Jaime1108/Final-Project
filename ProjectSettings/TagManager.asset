@@ -8,6 +8,8 @@ TagManager:
   - Enemy
   - weapon
   - Boss
+  - CleansingZone
+  - DefenseZone
   layers:
   - Default
   - TransparentFX

@@ -31,19 +31,23 @@ public class BossAIScript : MonoBehaviour
     
     private bool isWaiting = false;
     private bool patrolInitialized = false;
+    public CorruptedAltar altar;
+
+
 
     public AIState AIState;
 
     private void Awake(){
+        altar = FindFirstObjectByType<CorruptedAltar>();
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         playerstat = player.GetComponent<PlayerStat>();
-        health = 100;
+        health = 200;
 
         originalPosition = transform.position;
 
-        // Generate random patrol points around original position
+        // generate random patrol points around original position
         for (int i = 0; i < numberOfPatrolPoints; i++)
         {
             Vector2 randomCircle = Random.insideUnitCircle * patrolRadius;
@@ -79,19 +83,14 @@ public class BossAIScript : MonoBehaviour
         playerInAttack = Vector3.Distance(transform.position, player.position) <= attackRange;
         timeSinceLastAttack += Time.deltaTime;
 
-        if (playerInAttack && playerInSight && timeSinceLastAttack >= 3.6f)
-        {
-           
-
+        if (playerInAttack && playerInSight && timeSinceLastAttack >= 3.6f){
             AttackPlayer();
         }
-        else if (playerInSight)
-        {
+        else if (playerInSight){
             
             ChasePlayer();
         }
-        else
-        {
+        else{
             AIState.State="Patrol";
             Patrol();
         }
@@ -99,6 +98,11 @@ public class BossAIScript : MonoBehaviour
     }
 
     private void Patrol(){
+
+        if (altar != null && altar.isCleansing){
+            ChasePlayer();
+            return;
+        }
         if (!patrolInitialized)
         {
             if (!agent.isOnNavMesh) return;

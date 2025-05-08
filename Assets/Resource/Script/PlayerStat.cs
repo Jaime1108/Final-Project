@@ -12,6 +12,7 @@ public class PlayerStat : MonoBehaviour
     public int keyCount = 1; // Number of keys the player has
     public float maxStamina = 5f;
     public float stamina;
+    public CharacterControl characterControl;
 
     private UserInterface userinterface;
     private void Start()
@@ -20,6 +21,7 @@ public class PlayerStat : MonoBehaviour
         stamina = maxStamina;
         Debug.Log("Player start health: " + currentHealth);
         userinterface = FindFirstObjectByType<UserInterface>();
+        characterControl =  FindFirstObjectByType<CharacterControl>();
     }
 
     private void Update()
@@ -32,6 +34,7 @@ public class PlayerStat : MonoBehaviour
             UsePotion(25);
         }
         if(currentHealth == 0){
+            characterControl.isAlive = false;
             userinterface.currentActionText.text = "Our Great Knight has fallen!The Brotherhood shall avenge you!";
             Invoke(nameof(Die),3f);
         }
@@ -77,6 +80,7 @@ public class PlayerStat : MonoBehaviour
         Debug.Log($"Holy Water used. Current Holy Water Count: {holyWaterCount}");
     }
     public void Die(){
-        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        userinterface.Defeat();
+        //SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 }

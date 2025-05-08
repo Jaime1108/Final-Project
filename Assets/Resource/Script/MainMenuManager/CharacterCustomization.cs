@@ -4,10 +4,10 @@ public class CharacterCustomization : MonoBehaviour
 {
     public Material characterMaterial;
     public GameObject capeObject;
-    
+    public bool isOn = false;
 
     private void Start(){
-        
+        capeObject.SetActive(false);
     }
     public void ChangeArmorColor(Color color)
     {

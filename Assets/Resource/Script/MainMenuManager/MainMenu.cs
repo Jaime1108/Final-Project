@@ -170,8 +170,7 @@ public class MainMenu : MonoBehaviour
     }
 
     // Options buttons
-    public void OnCloseOptions()
-    {
+    public void CloseOption(){
         optionsPanel.SetActive(false);
     }
 }

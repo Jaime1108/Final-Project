@@ -6,6 +6,7 @@ public class PlayerAttack : MonoBehaviour
     private int currentWeaponIndex = 0;
     public GameObject weaponHolder; // Parent object in right hand
     private GameObject currentWeapon;
+    private CharacterControl characterControl;
     private WeaponData equippedWeapon;
     private Animator animator;
     public UserInterface userInterface;
@@ -23,7 +24,7 @@ public class PlayerAttack : MonoBehaviour
     {
         audioManager = FindFirstObjectByType<AudioManager>();
         animator = GetComponent<Animator>();
-
+        characterControl = FindFirstObjectByType<CharacterControl>();
         // Instantiatedefault weapons into weaponHolder
         GameObject weapon = Instantiate(weapons[0], weaponHolder.transform);
         weapons[0] = weapon;
@@ -37,11 +38,14 @@ public class PlayerAttack : MonoBehaviour
 
     void Update()
     {
-        HandleAttackInput();
-        HandleWeaponSwitchInput();
-        animator.SetBool("HasShortSword", oneHandWeapon);
-        animator.SetBool("HasLongSword", twoHandWeapon);
+        if(characterControl.isAlive){
+            HandleAttackInput();
+            HandleWeaponSwitchInput();
+            animator.SetBool("HasShortSword", oneHandWeapon);
+            animator.SetBool("HasLongSword", twoHandWeapon);
     }
+        }
+        
 
     void HandleAttackInput()
     {
@@ -52,17 +56,20 @@ public class PlayerAttack : MonoBehaviour
         }else if (Input.GetMouseButtonDown(1) && isEquipped){
             animator.SetTrigger("HeavyAttack");
             lastAttackDamage = equippedWeapon.damage + equippedWeapon.damage/2 ;
-            if(twoHandWeapon){
+            if( audioManager !=null){
+                if(twoHandWeapon){
                 Invoke(nameof(HeavyAttackSFX),0.7f);
-                
-            }
-            else{
-                Invoke(nameof(LightAttackSFX),0.4f);
-            }
+                }
+                else{
+                    Invoke(nameof(LightAttackSFX),0.4f);
+                }
+            };
+            
         }
 
     }
     void HeavyAttackSFX(){
+        
         audioManager.PlaySFX("Heavy Attack");
     }
 

@@ -17,6 +17,8 @@ public class CharacterControl : MonoBehaviour
     private bool isGrounded;
     public bool isMoving = false;
     public bool isSprinting = false;
+    public bool isAlive = true;
+    public bool triggerDealthAnimation = false;
 
     private Animator animator;
     public AudioSource walking;
@@ -26,6 +28,7 @@ public class CharacterControl : MonoBehaviour
 
     void Start()
     {
+        isAlive = true;
         audioManager = FindFirstObjectByType<AudioManager>();
         if (audioManager == null){
             volumeSFX = 1f;
@@ -41,27 +44,36 @@ public class CharacterControl : MonoBehaviour
 
     void Update()
     {
-        MovementControl();
-        rotateCharacter();
-        checkGroundStatus();
+        if(isAlive){
+            MovementControl();
+            rotateCharacter();
+            checkGroundStatus();
 
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-        {
-            jump();
-        }
-        animator.SetBool("IsMoving", isMoving);
-        animator.SetBool("IsSprinting", isSprinting);
-        useStamina();
-        if (isMoving){
-            if (!walking.isPlaying){
-                walking.Play();
+            if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
+            {
+                jump();
+            }
+            animator.SetBool("IsMoving", isMoving);
+            animator.SetBool("IsSprinting", isSprinting);
+            useStamina();
+            if (isMoving){
+                if (!walking.isPlaying){
+                    walking.Play();
+                }
+            }
+            else{
+                if (walking.isPlaying){
+                    walking.Stop();
+                }
+            }
+        }else{
+            if(!triggerDealthAnimation){
+                animator.SetTrigger("Die");
+                triggerDealthAnimation = true;
             }
         }
-        else{
-            if (walking.isPlaying){
-                walking.Stop();
-            }
-        }
+        
+        
     }
 
     void FixedUpdate()
