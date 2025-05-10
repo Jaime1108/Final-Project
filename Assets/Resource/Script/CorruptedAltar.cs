@@ -18,6 +18,9 @@ public class CorruptedAltar : MonoBehaviour
     public PlayerStat playerstat;
     public UserInterface userinterface;
     public AudioManager audioManager;
+    public AudioSource CursedSound;
+    public AudioSource CleansedSound;
+    public float gameVolume;
 
     public bool playerInCleansingRange = false;
     public bool playerInDefenseRange = false;
@@ -37,6 +40,16 @@ public class CorruptedAltar : MonoBehaviour
         if (CleansedFlame != null){
             CleansedFlame.SetActive(false); //flame on
         }
+
+        if (audioManager != null){
+            gameVolume =  audioManager.masterVolume * audioManager.musicVolume;
+        }else{
+            gameVolume = 0.75f;
+        }
+        CursedSound.loop = true;
+        CursedSound.volume = gameVolume;
+        CursedSound.Play();
+
     }
 
     void Update()
@@ -59,12 +72,12 @@ public class CorruptedAltar : MonoBehaviour
         }
         else{
             ableToExo = false;
-            userinterface.currentActionText.text = "";
+            //userinterface.currentActionText.text = "";
         }
 
         if (isCleansing)
         {
-            if (playerInDefenseRange){
+            if (playerInDefenseRange &&  playerstat.currentHealth >0){
                 timeOutsideDefense = 0f;
                 cleansingProgress += Time.deltaTime;
                 userinterface.currentActionText.text = "Cleansing the Area...";
@@ -103,6 +116,8 @@ public class CorruptedAltar : MonoBehaviour
         if (CleansedFlame != null){
             CleansedFlame.SetActive(true); // cleansed flame on
         }
+
+        CursedSound.Stop();
         audioManager.musicSource.loop = true;
         audioManager.PlayMusic("Cleansed");
 
@@ -115,6 +130,11 @@ public class CorruptedAltar : MonoBehaviour
         cleansingProgress = 0f;
         userinterface.currentActionText.text = "Cleansing failed. You have to stay close to the altar!";
         Debug.Log("Cleansing reset! Player left defense range too long.");
+    }
+    private void OnTriggerExit(Collider other){
+        if (other.CompareTag("Player")){
+            userinterface.currentActionText.text = "";
+    }
     }
 
 }

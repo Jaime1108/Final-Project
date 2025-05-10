@@ -16,7 +16,7 @@ public class EnemyAI : MonoBehaviour
     private PlayerStat playerstat;
     private float timeSinceLastAttack = 0f;
     private bool isAlive = true;
-    public CorruptedCore corecorruption;
+    public CorruptedCoreLv2 corecorruption;
 
     // Patrol Variables
     private Vector3 originalPosition;
@@ -33,7 +33,7 @@ public class EnemyAI : MonoBehaviour
 
     //Dropping key rate
     public GameObject keyPrefab;
-    private float keyDropChance = 0.9f;
+    private float keyDropChance = 0.2f;
     public AIState AIState;
 
     private void Awake(){

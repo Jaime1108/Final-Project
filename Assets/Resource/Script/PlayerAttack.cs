@@ -145,8 +145,7 @@ public class PlayerAttack : MonoBehaviour
     }
     void EquipWeapon(int index)
     {
-        if (index < 0 || index >= weapons.Length)
-        {
+        if (index < 0 || index >= weapons.Length){
             Debug.LogWarning("Invalid weapon index");
             return;
         }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class BossAIScript : MonoBehaviour
 {
     public NavMeshAgent agent;
-    public int health = 100;
+    public int health = 300;
     public Transform player;
     private Animator animator;
 
@@ -16,7 +16,6 @@ public class BossAIScript : MonoBehaviour
     private PlayerStat playerstat;
     private float timeSinceLastAttack = 0f;
     private bool isAlive = true;
-    public CorruptedCore corecorruption;
 
     // Patrol Variables
     private Vector3 originalPosition;
@@ -73,7 +72,7 @@ public class BossAIScript : MonoBehaviour
         animator.SetBool("IsMoving", isMoving);
         if (!isAlive) return;
 
-        if (health <= 0 || (corecorruption != null && corecorruption.isCleanse))
+        if (health <= 0 || (altar != null && altar.isCleanse))
         {
             Die();
             return;
@@ -196,11 +195,13 @@ public class BossAIScript : MonoBehaviour
 
     private void Die()
     {
+        if(isAlive == true){
+            animator.SetTrigger("Die");
+        }
         isAlive = false;
-        animator.SetBool("Alive", false);
         isMoving = false;
         agent.isStopped = true;
-        Destroy(gameObject, 6f);
+        Destroy(gameObject, 3f);
     }
 
     public void TakeDamage(int damage)

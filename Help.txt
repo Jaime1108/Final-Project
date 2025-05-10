@@ -1,8 +1,23 @@
+##guide
+how to set up sound manager: https://www.youtube.com/watch?v=rdX7nhH6jdM
+Set up changing resolution: https://www.youtube.com/watch?v=7GnBU0sPW0M&t=221s
+
+##audio
+Defeat Audio: https://www.myinstants.com/en/instant/elden-ring-death-34382/
+Most of the sound effect: https://www.myinstants.com/
+Theme: https://pixabay.com/sound-effects/search/chill/
+https://pixabay.com/sound-effects/search/horror%20ambience/?pagi=2
+Spooky Ambience by Sound Effects Library | https://www.free-stock-music.com/artist.sound-effects-library.html
+Music promoted by https://www.free-stock-music.com
+Creative Commons / CC0 1.0 Universal - Public Domain Dedication (CCO 1.0)
+https://creativecommons.org/publicdomain/zero/1.0/deed.en
+Gate opening SFX: https://pixabay.com/sound-effects/opening-gate1-58754/
+
+
+##3d Asset 
 Graveyard Asset including fence: https://sketchfab.com/3d-models/grave-yard-set-e7aab6a1bd1f489383e8749afd879c3e
 https://sketchfab.com/3d-models/asset-graveyard-the-darkest-red-d9e14354303147849d6ef59644436692
 enemy model: https://sketchfab.com/3d-models/lowpoly-skeleton-warrior-2e5a72e12a0d4822b00ae682ec2cf34d
 Cemetery gate: https://sketchfab.com/3d-models/cemetery-gate-v1-0e649d89717e4cb4acdaf9ac3a469c9f
-how to set up sound manager: https://www.youtube.com/watch?v=rdX7nhH6jdM
-Set up changing resolution: https://www.youtube.com/watch?v=7GnBU0sPW0M&t=221s
-Defeat Audio: https://www.myinstants.com/en/instant/elden-ring-death-34382/
-Most of the sound effect: https://www.myinstants.com/
+Tree: https://sketchfab.com/3d-models/skeletal-tree-free-b14cd22c878c4d7c83379ab3d53cf7a9#download
+https://sketchfab.com/3d-models/dead-tree-ps1-low-poly-de2611ba107f4c3c8c89bf516d5d9b6b#download

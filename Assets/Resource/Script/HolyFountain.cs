@@ -18,7 +18,7 @@ public class HolyFountain : MonoBehaviour
         if(playerInRange  && !collected){
             userinterface.currentActionText.text = "My faith guides me… [E] to gather the holy water.";
         }
-        if (Input.GetKeyDown(KeyCode.F) && playerInRange){
+        if (Input.GetKeyDown(KeyCode.E) && playerInRange){
             if(!collected){
                 CollectHolyWater();
             }

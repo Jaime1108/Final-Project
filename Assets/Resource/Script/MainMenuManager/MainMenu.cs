@@ -9,16 +9,17 @@ public class MainMenu : MonoBehaviour
     public GameObject difficultyPanel;
     public GameObject customizationPanel;
     public GameObject optionsPanel;
+    public GameObject instructionPanel;
     public CharacterCustomization CharacterCustomization;
     public Toggle capeToggle;
 
 
     // resolution
     public TMP_Dropdown resolutionDropdown;
-    private Resolution[] allResolutions;
+    private Resolution[] ResolutionList;
     private List<Resolution> uniqueResolutionList = new List<Resolution>();
     private List<string> resolutionStringList = new List<string>();
-    private int currentResolutionIndex = 0;
+    private int currentResolutionPosition = 0;
 
     // sound manager 
     public Scrollbar masterScrollbar;
@@ -31,6 +32,7 @@ public class MainMenu : MonoBehaviour
         difficultyPanel.SetActive(false);
         customizationPanel.SetActive(false);
         optionsPanel.SetActive(false);
+        instructionPanel.SetActive(false);
 
         //Sound manager
         masterScrollbar.value = AudioManager.Instance.masterVolume;
@@ -42,48 +44,47 @@ public class MainMenu : MonoBehaviour
         sfxScrollbar.onValueChanged.AddListener(SetSFXVolume);
 
         //resolution
-        allResolutions = Screen.resolutions;
+        ResolutionList = Screen.resolutions;
         resolutionDropdown.ClearOptions();
 
-        string newRes;
-        for (int i = 0; i < allResolutions.Length; i++)
+        string resolution;
+        for (int i = 0; i < ResolutionList.Length; i++)
         {
-            newRes = allResolutions[i].width + " x " + allResolutions[i].height;
+            resolution = ResolutionList[i].width + " x " + ResolutionList[i].height;
 
-            if (!resolutionStringList.Contains(newRes))
+            if (!resolutionStringList.Contains(resolution))
             {
-                resolutionStringList.Add(newRes);
-                uniqueResolutionList.Add(allResolutions[i]);
+                resolutionStringList.Add(resolution);
+                uniqueResolutionList.Add(ResolutionList[i]);
 
-                if (allResolutions[i].width == Screen.currentResolution.width &&
-                    allResolutions[i].height == Screen.currentResolution.height)
-                {
-                    currentResolutionIndex = uniqueResolutionList.Count - 1;
+                if (ResolutionList[i].width == Screen.currentResolution.width && ResolutionList[i].height == Screen.currentResolution.height){
+                    currentResolutionPosition = uniqueResolutionList.Count - 1;
                 }
             }
         }
 
         resolutionDropdown.AddOptions(resolutionStringList);
-        resolutionDropdown.value = currentResolutionIndex;
+        resolutionDropdown.value = currentResolutionPosition;
         resolutionDropdown.RefreshShownValue();
-
         resolutionDropdown.onValueChanged.AddListener(ChangeResolution);
     }
 
 
 
     // Main menu buttons
-    public void OnPlayPressed()
+    public void PlayGame()
     {
         SceneManager.LoadScene("SampleScene");
     }
 
     //option menu
-    public void OnOptionsPressed()
+    public void OpenOption()
     {
         optionsPanel.SetActive(true);
     }
-
+    public void CloseOption(){
+        optionsPanel.SetActive(false);
+    }
 
 
     public void ChangeResolution(int index)
@@ -106,37 +107,20 @@ public class MainMenu : MonoBehaviour
         AudioManager.Instance.sfxVolume = value;
     }
 
+    //instrution
+    public void OpenInstruction(){
+        instructionPanel.SetActive(true);
+    }
+    public void CloseInstruction(){
+        instructionPanel.SetActive(false);
+    }
 
 
-
-    public void OnQuitPressed()
+    public void QuitGame()
     {
         Application.Quit();
     }
 
-    // Difficulty buttons
-    public void SelectEasy()
-    {
-        PlayerPrefs.SetString("Difficulty", "Easy");
-        SceneManager.LoadScene("GameScene");
-    }
-
-    public void SelectMedium()
-    {
-        PlayerPrefs.SetString("Difficulty", "Normal");
-        SceneManager.LoadScene("GameScene");
-    }
-
-    public void SelectHard()
-    {
-        PlayerPrefs.SetString("Difficulty", "Hard");
-        SceneManager.LoadScene("GameScene");
-    }
-
-    public void CloseDifficulty()
-    {
-        difficultyPanel.SetActive(false);
-    }
 
     // Customization buttons
     public void Red(){
@@ -169,8 +153,5 @@ public class MainMenu : MonoBehaviour
         customizationPanel.SetActive(false);
     }
 
-    // Options buttons
-    public void CloseOption(){
-        optionsPanel.SetActive(false);
-    }
+    
 }

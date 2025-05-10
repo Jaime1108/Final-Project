@@ -48,8 +48,7 @@ public class Key : MonoBehaviour
         if (playerStat != null)
         {
             playerStat.keyCount += 1;
-            if (audioManager != null)
-            {
+            if (audioManager != null){
                 audioManager.PlaySFX("KeyPickup");
             }
             userInterface.currentActionText.text = "";

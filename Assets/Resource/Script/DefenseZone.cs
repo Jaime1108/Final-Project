@@ -3,12 +3,15 @@ using UnityEngine;
 public class DefenseZone : MonoBehaviour
 {
     public CorruptedAltar altar;
-    public CorruptedCore corruptedCore;
+    public CorruptedCoreLv2 corruptedCore;
+
 
     private void OnTriggerEnter(Collider other){
         if (other.CompareTag("Player")){
             if (altar != null){
                 altar.playerInDefenseRange = true;
+            }else{
+                corruptedCore.playerInDefenseRange = true;
             }
         }
     }
@@ -16,7 +19,9 @@ public class DefenseZone : MonoBehaviour
     private void OnTriggerExit(Collider other){
         if (other.CompareTag("Player")){
             if (altar != null){
-                altar.playerInDefenseRange = true;
+                altar.playerInDefenseRange = false;
+            }else{
+                corruptedCore.playerInDefenseRange = false;
             }
         }
     }

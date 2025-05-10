@@ -88,6 +88,11 @@ public class UserInterface : MonoBehaviour
 
     public void QuitToMenu()
     {
+        if (audioManager != null){
+            audioManager.musicSource.Stop();
+            audioManager.PlayMusic("General Theme");;
+        }
+        
         Time.timeScale = 1f; // reset time scale before loading new scene
         SceneManager.LoadScene("MainMenu"); // replace with your main menu scene name
     }
