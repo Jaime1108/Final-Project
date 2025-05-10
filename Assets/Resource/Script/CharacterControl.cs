@@ -47,10 +47,8 @@ public class CharacterControl : MonoBehaviour
         if(isAlive){
             MovementControl();
             rotateCharacter();
-            checkGroundStatus();
-
-            if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-            {
+            checkIfPlayerAtGround();
+            if (Input.GetKeyDown(KeyCode.Space) && isGrounded){
                 jump();
             }
             animator.SetBool("IsMoving", isMoving);
@@ -58,8 +56,7 @@ public class CharacterControl : MonoBehaviour
             useStamina();
             if (isMoving){
                 if (!walking.isPlaying){
-                    walking.Play();
-                }
+                    walking.Play();}
             }
             else{
                 if (walking.isPlaying){
@@ -125,31 +122,28 @@ public class CharacterControl : MonoBehaviour
     {
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, rb.linearVelocity.z);
 
-        if (animator != null)
-        {
+        // ended up not implementing the animation
+        if (animator != null){
             animator.SetTrigger("Jump");
         }
     }
 
-    void checkGroundStatus()
-    {
+    void checkIfPlayerAtGround(){
         isGrounded = Physics.Raycast(transform.position, Vector3.down, 1.1f);
     }
 
     void useStamina()
     {
-        if (isSprinting)
-        {
+        if (isSprinting){
             playerStat.stamina -= staminaDrainRate * Time.deltaTime;
         }
-        else if (playerStat.stamina < playerStat.maxStamina)
-        {
+        else if (playerStat.stamina < playerStat.maxStamina){
             playerStat.stamina += staminaRecoveryRate * Time.deltaTime;
         }
-
-        playerStat.stamina = Mathf.Clamp(playerStat.stamina, 0f, playerStat.maxStamina);  
-
-
-        Debug.Log($"Current Stamina: {playerStat.stamina:F2}");
+        if (playerStat.stamina < 0f){
+            playerStat.stamina = 0f;
+        }else if (playerStat.stamina > playerStat.maxStamina){
+            playerStat.stamina = playerStat.maxStamina;
+        }
     }
 }
